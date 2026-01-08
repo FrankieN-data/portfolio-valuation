@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: bronze_portfolio
+    description: "Raw Parquet files converted from broker CSVs."
+    meta:
+      # This looks 'up' one level from dbt_project into the data/bronze folder
+      external_location: "../data/bronze/{name}.parquet"
+    tables:
+      - name: dim_account
+      - name: dim_customer
+      - name: dim_investment_platform
+      - name: transactions_equateplus
+      - name: transactions_oneview
+      - name: transactions_vanguard_isa_cash
+      - name: transactions_vanguard_isa_investment
+      - name: transactions_vanguard_pension_cash
+      - name: transactions_vanguard_pension_investment

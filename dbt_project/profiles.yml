@@ -1,0 +1,9 @@
+# This name must match the 'profile' line in your dbt_project.yml
+portfolio_valuation:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: '../portfolio_metrics.db' 
+      extensions:
+        - parquet
