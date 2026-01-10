@@ -1,8 +1,10 @@
 -- 🚀 Convert raw CSVs → typed, documented Parquet (staging layer)
 -- Run: duckdb -init 01_load_and_convert.sql
 
+
 -- Define base paths as variables
-SET variable base_path = 'C:/Users/grinouna/OneDrive/Projects/portfolio-valuation';
+SET variable onedrive_path = getenv('OneDrive');
+SET variable base_path = getvariable('onedrive_path') || '/Projects/portfolio-valuation';
 SET variable raw_path = getvariable('base_path') || '/data/raw';
 SET variable bronze_path = getvariable('base_path') || '/data/bronze';
 
@@ -15,11 +17,11 @@ SET variable bronze_path = getvariable('base_path') || '/data/bronze';
 -- tax_regime_uk_cd: VARCHAR
 COPY (
   SELECT
-    CAST(account_key AS INTEGER) AS account_key,
-    TRIM(account_commercial_name_txt) AS account_name_txt,
-    TRIM(account_type_cd) AS account_type_cd,
-    TRIM(account_subtype_cd) AS account_subtype_cd,
-    TRIM(tax_regime_uk_cd) AS tax_regime_uk_cd
+    CAST("account_key" AS INTEGER) AS account_key,
+    TRIM("account_commercial_name_txt") AS account_name_txt,
+    TRIM("account_type_cd") AS account_type_cd,
+    TRIM("account_subtype_cd") AS account_subtype_cd,
+    TRIM("tax_regime_uk_cd") AS tax_regime_uk_cd
   FROM read_csv_auto(
     (getvariable('raw_path') || '/dim_account.csv'),
     header = true,
@@ -30,15 +32,44 @@ COPY (
 ) TO (getvariable('bronze_path') || '/dim_account.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 2. Convert dim_customers.csv → dim_customers.parquet (with explicit types)
+-- 2. Convert dim_asset.csv → dim_asset.parquet (with explicit types)
+-- asset_id: INTEGER
+-- isin: VARCHAR
+-- asset_name_txt: VARCHAR
+-- asset_shortname_txt: VARCHAR
+-- stock_market_name_txt: VARCHAR
+-- asset_type_cd: VARCHAR
+-- asset_income_treatment_cd: VARCHAR
+-- asset_base_currency_cd: CHAR(3)
+COPY (
+  SELECT
+    CAST("fdasst_asset_id" AS INTEGER) AS asset_id,
+    TRIM("local_asset_id") AS isin,
+    TRIM("asset_nm") AS asset_name_txt,
+    TRIM("asset_short_nm") AS asset_shortname_txt,
+    TRIM("stock_market_nm") AS stock_market_name_txt,
+    TRIM("asset_type_nm") AS asset_type_cd,
+    TRIM("asset_income_treatment_nm") AS asset_income_treatment_cd,
+    TRIM("asset_base_currency_cd") AS asset_base_currency_cd
+  FROM read_csv_auto(
+    (getvariable('raw_path') || '/dim_asset.csv'),
+    header = true,
+    null_padding = true,
+    types = {"fdasst_asset_id": "VARCHAR"}
+  )
+  WHERE "fdasst_asset_id" IS NOT NULL  
+) TO (getvariable('bronze_path') || '/dim_asset.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+
+
+-- 3. Convert dim_customers.csv → dim_customers.parquet (with explicit types)
 -- customer_key: INTEGER
 -- customer_firstname: VARCHAR
 -- customer_lastname: VARCHAR
 COPY (
   SELECT
-    CAST(customer_key AS INTEGER) AS customer_key,
-    TRIM(customer_firstname) AS customer_firstname_txt,
-    TRIM(customer_lastname) AS customer_lastname_txt
+    CAST("customer_key" AS INTEGER) AS customer_key,
+    TRIM("customer_firstname") AS customer_firstname_txt,
+    TRIM("customer_lastname") AS customer_lastname_txt
   FROM read_csv_auto(
     (getvariable('raw_path') || '/dim_customer.csv'),
     header = true,
@@ -49,15 +80,15 @@ COPY (
 ) TO (getvariable('bronze_path') || '/dim_customer.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 3. Convert dim_investment_platform.csv → dim_investment_platform.parquet (with explicit types)
+-- 4. Convert dim_investment_platform.csv → dim_investment_platform.parquet (with explicit types)
 -- investment_platform_key: INTEGER
 -- investment_platform_name_txt: VARCHAR
 -- investment_platform_shortname_txt: VARCHAR
 COPY (
   SELECT
-    CAST(investment_platform_key AS INTEGER) AS investment_platform_key,
-    TRIM(investment_platform_commercial_name_txt) AS investment_platform_name_txt,
-    TRIM(investment_platform_shortname_txt) AS investment_platform_shortname_txt
+    CAST("investment_platform_key" AS INTEGER) AS investment_platform_key,
+    TRIM("investment_platform_commercial_name_txt") AS investment_platform_name_txt,
+    TRIM("investment_platform_shortname_txt") AS investment_platform_shortname_txt
   FROM read_csv_auto(
     (getvariable('raw_path')) || '/dim_investment_platform.csv',
     header = true,
@@ -68,7 +99,30 @@ COPY (
 ) TO (getvariable('bronze_path') || '/dim_investment_platform.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 4. Convert transaction_equateplus.csv → transaction_equateplus.parquet (with explicit types)
+-- 5. Convert asset_quotations.csv → asset_quotations.parquet (with explicit types)
+-- quotation_date: DATE
+-- asset_id: INTEGER
+-- unit_market_value_gbp_num: VARCHAR
+COPY (
+  SELECT
+    CAST("quote_date_dt" AS DATE) AS quotation_date, -- date format: YYYY-MM-DD
+    CAST("fdasst_asset_id" AS INTEGER) AS asset_id,
+    CAST(regexp_replace("asset_price_GBP_amt", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS unit_market_value_gbp_num
+  FROM read_csv_auto(
+    (getvariable('raw_path')) || '/asset_quotations.csv',
+    header = true,
+    null_padding = true,
+    types = {
+      "quote_date_dt": "VARCHAR", 
+      "fdasst_asset_id": "VARCHAR", 
+      "asset_price_GBP_amt": "VARCHAR"
+    } 
+  )
+  WHERE "quote_date_dt" IS NOT NULL 
+) TO (getvariable('bronze_path') || '/asset_quotations.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+
+
+-- 6. Convert equateplus_transactions.csv → equateplus_transactions.parquet (with explicit types)
 -- allocation_date: DATE
 -- plan_name_txt: VARCHAR
 -- instrument_type_cd: VARCHAR
@@ -100,7 +154,7 @@ COPY (
     CAST(regexp_replace("Estimated current outstanding value", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS estimated_current_outstanding_value_gbp_num,
     CAST(regexp_replace("Estimated current available value", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS estimated_current_available_value_gbp_num
   FROM read_csv_auto(
-    (getvariable('raw_path') || '/transactions_equateplus.csv'),
+    (getvariable('raw_path') || '/equateplus_transactions.csv'),
     header = true,
     null_padding = true,
     types = {
@@ -118,10 +172,10 @@ COPY (
     decimal_separator='.'   
   )
   WHERE "Allocation date" IS NOT NULL 
-) TO (getvariable('bronze_path') || '/transactions_equateplus.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+) TO (getvariable('bronze_path') || '/equateplus_transactions.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 5. Convert transaction_oneview.csv → transaction_oneview.parquet (with explicit types)
+-- 7. Convert oneview_transactions.csv → oneview_transactions.parquet (with explicit types)
 -- trade_date: DATE
 -- transaction_type_cd: VARCHAR
 -- fund_name_txt: VARCHAR
@@ -139,7 +193,7 @@ COPY (
     CAST(regexp_replace("Trade Price", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS trade_price_gbp_num,
     CAST("Switch No." AS INTEGER) AS switch_key
   FROM read_csv_auto(
-    (getvariable('raw_path') || '/transactions_oneview.csv'),
+    (getvariable('raw_path') || '/oneview_transactions.csv'),
     header = true,
     null_padding = true,
     types = {
@@ -152,10 +206,10 @@ COPY (
     decimal_separator='.'  
   )
   WHERE "Trade Date" IS NOT NULL 
-) TO (getvariable('bronze_path') || '/transactions_oneview.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+) TO (getvariable('bronze_path') || '/oneview_transactions.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 6. Convert transaction_vanguard_isa_cash.csv → transaction_vanguard_isa_cash.parquet (with explicit types)
+-- 8. Convert vanguard_isa_cash.csv → vanguard_isa_cash.parquet (with explicit types)
 -- transfer_date: DATE
 -- transfer_details_txt: VARCHAR
 -- transfer_amount_gbp_num: DECIMAL
@@ -167,7 +221,7 @@ COPY (
     CAST(regexp_replace("Amount", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS transfer_amount_gbp_num,
     CAST(regexp_replace("Balance", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS account_balance_gbp_num
   FROM read_csv_auto(
-    (getvariable('raw_path') || '/transactions_vanguard_isa_cash.csv'),
+    (getvariable('raw_path') || '/vanguard_isa_cash.csv'),
     header = true,
     null_padding = true,
     types = {
@@ -178,10 +232,10 @@ COPY (
     decimal_separator='.'   
   )
   WHERE "Date" IS NOT NULL 
-) TO (getvariable('bronze_path') || '/transactions_vanguard_isa_cash.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+) TO (getvariable('bronze_path') || '/vanguard_isa_cash.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 7. Convert transaction_vanguard_pension_cash.csv → transaction_vanguard_pension_cash.parquet (with explicit types)
+-- 9. Convert vanguard_pension_cash.csv → vanguard_pension_cash.parquet (with explicit types)
 -- transfer_date: DATE
 -- transfer_details_txt: VARCHAR
 -- transfer_amount_gbp_num: DECIMAL
@@ -193,7 +247,7 @@ COPY (
     CAST(regexp_replace("Amount", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS transfer_amount_gbp_num,
     CAST(regexp_replace("Balance", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS account_balance_gbp_num
   FROM read_csv_auto(
-    (getvariable('raw_path') || '/transactions_vanguard_pension_cash.csv'),
+    (getvariable('raw_path') || '/vanguard_pension_cash.csv'),
     header = true,
     null_padding = true,
     types = {
@@ -204,10 +258,10 @@ COPY (
     decimal_separator='.'   
   )
   WHERE "Date" IS NOT NULL 
-) TO (getvariable('bronze_path') || '/transactions_vanguard_pension_cash.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+) TO (getvariable('bronze_path') || '/vanguard_pension_cash.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 8. Convert transactions_vanguard_isa_investment.csv → transactions_vanguard_isa_investment.parquet (with explicit types)
+-- 10. Convert vanguard_isa_transactions.csv → vanguard_isa_transactions.parquet (with explicit types)
 -- trade_date: DATE
 -- asset_name_txt: VARCHAR
 -- trade_details_txt: VARCHAR
@@ -223,7 +277,7 @@ COPY (
     CAST(regexp_replace("Price", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS trade_unit_price_num,
     CAST(regexp_replace("Cost", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS trade_amount_gbp_num
   FROM read_csv_auto(
-    (getvariable('raw_path') || '/transactions_vanguard_isa_investment.csv'),
+    (getvariable('raw_path') || '/vanguard_isa_transactions.csv'),
     header = true,
     null_padding = true,
     types = {
@@ -235,10 +289,10 @@ COPY (
     decimal_separator='.'   
   )
   WHERE "Date" IS NOT NULL 
-) TO (getvariable('bronze_path') || '/transactions_vanguard_isa_investment.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+) TO (getvariable('bronze_path') || '/vanguard_isa_transactions.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
 
 
--- 9. Convert transactions_vanguard_pension_investment.csv → transactions_vanguard_pension_investment.parquet (with explicit types)
+-- 11. Convert vanguard_pension_transactions.csv → vanguard_pension_transactions.parquet (with explicit types)
 -- trade_date: DATE
 -- asset_name_txt: VARCHAR
 -- trade_details_txt: VARCHAR
@@ -254,7 +308,7 @@ COPY (
     CAST(regexp_replace("Price", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS trade_unit_price_num,
     CAST(regexp_replace("Cost", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS trade_amount_gbp_num
   FROM read_csv_auto(
-    (getvariable('raw_path') || '/transactions_vanguard_pension_investment.csv'),
+    (getvariable('raw_path') || '/vanguard_pension_transactions.csv'),
     header = true,
     null_padding = true,
     types = {
@@ -266,4 +320,4 @@ COPY (
     decimal_separator='.'   
   )
   WHERE "Date" IS NOT NULL 
-) TO (getvariable('bronze_path') || '/transactions_vanguard_pension_investment.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');
+) TO (getvariable('bronze_path') || '/vanguard_pension_transactions.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');

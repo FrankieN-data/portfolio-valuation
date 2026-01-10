@@ -8,11 +8,13 @@ sources:
       external_location: "../data/bronze/{name}.parquet"
     tables:
       - name: dim_account
+      - name: dim_asset
       - name: dim_customer
       - name: dim_investment_platform
-      - name: transactions_equateplus
-      - name: transactions_oneview
-      - name: transactions_vanguard_isa_cash
-      - name: transactions_vanguard_isa_investment
-      - name: transactions_vanguard_pension_cash
-      - name: transactions_vanguard_pension_investment
+      - name: asset_quotations
+      - name: equateplus_transactions
+      - name: oneview_transactions
+      - name: vanguard_isa_cash
+      - name: vanguard_isa_transactions
+      - name: vanguard_pension_cash
+      - name: vanguard_pension_transactions

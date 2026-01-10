@@ -4,6 +4,6 @@ portfolio_valuation:
   outputs:
     dev:
       type: duckdb
-      path: '../portfolio_metrics.db' 
+      path: '../portfolio_valuation.db' 
       extensions:
         - parquet
