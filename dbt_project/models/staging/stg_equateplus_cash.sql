@@ -25,10 +25,9 @@ final as (
     select
         
         cast(allocation_date as DATE) as transfer_dt,
-
-        cast('FRANCINE NZUZI' as VARCHAR) as user_fullname_txt,        
-        cast('COMPUTERSHARE' as VARCHAR) as investment_platform_shortname_txt,
-        cast(upper(plan_name_txt) as VARCHAR) as account_name_txt,
+        cast('FRANCINE.NZUZI@GMAIL.COM' as VARCHAR) as customer_email_txt,        
+        cast('03015818' as VARCHAR) as company_number_key,
+        cast('WRP_SIP_NO_TAX' as VARCHAR) as wrapper_key,
         cast('DEPOSIT' as VARCHAR) as transfer_type_cd,
         cast(upper(transfer_subtype_cd) as VARCHAR) as transfer_subtype_cd,
         cast(extended_transfer_amount_gbp_num as DECIMAL(18,4)) as transfer_amount_gbp_num

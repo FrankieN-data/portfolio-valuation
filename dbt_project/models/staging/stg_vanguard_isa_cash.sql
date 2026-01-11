@@ -29,9 +29,9 @@ final as (
     select
         
         cast(transfer_date as DATE) as transfer_dt,
-        cast('FRANCINE NZUZI' as VARCHAR) as user_fullname_txt,        
-        cast(upper('Vanguard Asset Management Ltd') as VARCHAR) as investment_platform_shortname_txt,
-        cast('SELF MANAGED ISA' as VARCHAR) as account_name_txt,
+        cast('FRANCINE.NZUZI@GMAIL.COM' as VARCHAR) as customer_email_txt,                 
+        cast('07243412' as VARCHAR) as company_number_key,
+        cast('WRP_SSISA_NO_TAX' as VARCHAR) as wrapper_key,
         cast(transfer_type_cd as VARCHAR) as transfer_type_cd,
         cast(transfer_subtype_cd as VARCHAR) as transfer_subtype_cd,
         cast(transfer_amount_gbp_num as DECIMAL(18,4)) as transfer_amount_gbp_num

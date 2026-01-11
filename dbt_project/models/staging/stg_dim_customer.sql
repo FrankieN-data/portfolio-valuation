@@ -5,19 +5,17 @@ with source as (
 
 cleaning as (
     select 
-        customer_key,
-        customer_firstname_txt,
-        customer_lastname_txt,
+        *,
         upper(trim(customer_firstname_txt||' '||customer_lastname_txt)) as customer_fullname_txt
     from source
 ),
 
 final as (
     select
-        cast(customer_key AS INTEGER) as customer_key,
-        cast(customer_firstname_txt AS VARCHAR) as customer_firstname_txt,
-        cast(customer_lastname_txt AS VARCHAR) as customer_lastname_txt,
-        cast(customer_fullname_txt AS VARCHAR) as customer_fullname_txt
+        cast(upper(customer_email_txt) AS VARCHAR) as customer_email_txt,
+        cast(upper(customer_firstname_txt) AS VARCHAR) as customer_firstname_txt,
+        cast(upper(customer_lastname_txt) AS VARCHAR) as customer_lastname_txt,
+        cast(upper(customer_fullname_txt) AS VARCHAR) as customer_fullname_txt
     from cleaning
 )
 

@@ -7,10 +7,10 @@ sources:
       # This looks 'up' one level from dbt_project into the data/bronze folder
       external_location: "../data/bronze/{name}.parquet"
     tables:
-      - name: dim_account
       - name: dim_asset
+      - name: dim_company
       - name: dim_customer
-      - name: dim_investment_platform
+      - name: dim_wrapper
       - name: asset_quotations
       - name: equateplus_transactions
       - name: oneview_transactions

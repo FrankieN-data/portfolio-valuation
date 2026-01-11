@@ -28,9 +28,9 @@ final as (
     select
         
         cast(trade_date as DATE) as transaction_dt,
-        cast('FRANCINE NZUZI' as VARCHAR) as user_fullname_txt,        
-        cast('ONEVIEW' as VARCHAR) as investment_platform_shortname_txt,
-        cast(upper('Workplace Pension') as VARCHAR) as account_name_txt,
+        cast('FRANCINE.NZUZI@GMAIL.COM' as VARCHAR) as customer_email_txt,       
+        cast('00984275' as VARCHAR) as company_number_key,
+        cast('WRP_PENSION_TAX' as VARCHAR) as wrapper_key,
         cast(upper(fund_name_txt) as VARCHAR) as asset_name_txt,
         cast(upper(order_type_cd) as VARCHAR) as order_type_cd,
         cast(upper(order_subtype_cd) as VARCHAR) as order_subtype_cd,

@@ -22,10 +22,10 @@ final as (
         
         cast(allocation_date as DATE) as transaction_dt,
 
-        cast('FRANCINE NZUZI' as VARCHAR) as user_fullname_txt,        
-        cast('COMPUTERSHARE' as VARCHAR) as investment_platform_shortname_txt,
-        cast(upper(plan_name_txt) as VARCHAR) as account_name_txt,
-        cast('' as VARCHAR) as asset_name_txt,
+        cast('FRANCINE.NZUZI@GMAIL.COM' as VARCHAR) as customer_email_txt,        
+        cast('03015818' as VARCHAR) as company_number_key,
+        cast('WRP_SIP_NO_TAX' as VARCHAR) as wrapper_key,
+        cast(upper(asset_name_txt) as VARCHAR) as asset_name_txt,
         cast('BUY' as VARCHAR) as order_type_cd,
         cast ('ASSET ACQUISITION' as VARCHAR) as order_subtype_cd,
         cast(instrument_cd as VARCHAR) as transaction_details_txt,

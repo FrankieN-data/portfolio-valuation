@@ -58,9 +58,9 @@ calculate_net_contribution as (
 final as (
     select
         cast(trade_date as DATE) as transfer_dt,
-        cast('FRANCINE NZUZI' as VARCHAR) as user_fullname_txt,        
-        cast('ONEVIEW' as VARCHAR) as investment_platform_shortname_txt,
-        cast('WORKPLACE PENSION' as VARCHAR) as account_name_txt,
+        cast('FRANCINE.NZUZI@GMAIL.COM' as VARCHAR) as customer_email_txt,        
+        cast('00984275' as VARCHAR) as company_number_key,
+        cast('WRP_PENSION_TAX' as VARCHAR) as wrapper_key,
         cast(upper(transfer_type_cd) as VARCHAR) as transfer_type_cd,
         cast(upper(transfer_subtype_cd) as VARCHAR) as transfer_subtype_cd,
         cast(transfer_amount_gbp_num as DECIMAL(18,4)) as transfer_amount_gbp_num
