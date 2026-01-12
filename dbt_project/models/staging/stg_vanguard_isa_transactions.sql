@@ -28,7 +28,7 @@ final as (
         cast('FRANCINE.NZUZI@GMAIL.COM' as VARCHAR) as customer_email_txt,                 
         cast('07243412' as VARCHAR) as company_number_key,
         cast('WRP_SSISA_NO_TAX' as VARCHAR) as wrapper_key,
-        cast(upper(asset_name_txt) as VARCHAR) as asset_name_txt,
+        cast(upper(asset_name_txt) as VARCHAR) as asset_local_name_txt,
         cast(order_type_cd as VARCHAR) as order_type_cd,
         cast(order_subtype_cd as VARCHAR) as order_subtype_cd,
         cast(trade_details_txt as VARCHAR) as transaction_details_txt,

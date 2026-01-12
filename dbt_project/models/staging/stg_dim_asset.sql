@@ -18,10 +18,9 @@ cleaning as (
 
 final as (
     select
-        cast(asset_id AS INTEGER) as asset_id,
-        cast(isin AS VARCHAR) as isin,
+        cast(isin AS VARCHAR) as asset_key,
         cast(asset_name_txt AS VARCHAR) as asset_name_txt,
-        cast(asset_shortname_txt AS VARCHAR) as asset_shortname_txt,
+        cast(asset_shortname_txt AS VARCHAR) as asset_display_name_txt,
         cast(stock_market_name_txt AS VARCHAR) as stock_market_name_txt,
         cast(asset_type_cd AS VARCHAR) as asset_type_cd,
         cast(asset_income_treatment_cd AS VARCHAR) as asset_income_treatment_cd,
