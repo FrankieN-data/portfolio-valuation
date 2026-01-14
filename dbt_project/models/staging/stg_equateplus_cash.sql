@@ -7,7 +7,7 @@ string_cleaning as (
     select 
         *,
         case 
-            when contribution_type_cd = 'Purchase' then 'ASSET ACQUISITION'
+            when contribution_type_cd = 'Purchase' then 'NET CONTRIBUTION'
             when contribution_type_cd = 'Dividend' then 'DIVIDEND'
             else 'OTHER'
         end as transfer_subtype_cd

@@ -1,0 +1,224 @@
+version: 2
+
+models:
+    - name: stg_dim_asset
+      columns:
+        - name: asset_key
+          tests:
+            - unique 
+            - not_null
+        - name: asset_name_txt
+          tests:
+            - not_null
+        - name: asset_display_name_txt
+          tests:
+            - not_null
+        - name: stock_market_name_txt
+          tests:
+            - not_null
+        - name: asset_class_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['EQUITY', 'FUND', 'DERIVATIVE', 'FIXED INCOME', 'CRYPTOCURRENCY']
+        - name: asset_type_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['SHARE', 'PREFERRED SHARE', 'EQUITY WARRANT', 'ACTIVE FUND', 'PASSIVE FUND', 'EXCHANGE-TRADED FUND', 
+                         'FUTURE', 'OPTION', 'SWAP', 'FORWARD', 'BOND', 'TREASURY BILL', 'CORPORATE LOAN', 'CRYPTOCURRENCY']
+        - name: asset_income_treatment_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['ACCUMULATION', 'DISTRIBUTING']
+        - name: asset_base_currency_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['EUR', 'GBP', 'USD']
+
+
+    - name: stg_dim_company
+      columns:
+        - name: company_number_key
+          tests:
+            - unique 
+            - not_null
+        - name: company_number_type_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['CRN']
+        - name: company_country_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['GBR']
+        - name: firm_register_number_key
+          tests:
+            - not_null
+        - name: company_name_txt
+          tests:
+            - not_null
+        - name: company_display_name_txt
+          tests:
+            - not_null
+
+
+    - name: stg_dim_customer
+      columns:
+        - name: customer_email_txt
+          tests:
+            - unique 
+            - not_null
+        - name: customer_firstname_txt
+          tests:
+            - not_null
+        - name: customer_lastname_txt
+          tests:
+            - not_null
+        - name: customer_fullname_txt
+          tests:
+            - not_null
+
+
+    - name: stg_dim_wrapper
+      columns:
+        - name: wrapper_key
+          tests:
+            - unique 
+            - not_null
+        - name: wrapper_name_txt
+          tests:
+            - not_null
+        - name: wrapper_type_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['GIA', 'ISA', 'PENSION']
+        - name: wrapper_subtype_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['GIA', 'SIP', 'CASH ISA', 'INNOVATIVE FINANCE ISA', 'JUNIOR ISA', 'LIFETIME ISA', 'STOCKS AND SHARES ISA', 'WORKPLACE PENSION', 'SIPP']
+        - name: tax_regime_uk_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['TAX FREE', 'CAPITAL TAX', 'INCOME TAX', ]
+
+
+    - name: stg_equateplus_cash
+      columns: &cash_table_columns
+        - name: transfer_dt
+          tests:
+            - not_null
+        - name: customer_email_txt
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_customer')
+                field: customer_email_txt
+        - name: company_number_key
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_company')
+                field: company_number_key
+        - name: wrapper_key
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_wrapper')
+                field: wrapper_key
+        - name: transfer_type_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['DEPOSIT', 'SWITCH', 'WITHDRAWAL']
+        - name: transfer_subtype_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['NET CONTRIBUTION', 'PURCHASE', 'DIVIDEND', 'EMPLOYER MATCH', 'TAX RELIEF', 'SWITCH OUT', 
+                         'SWITCH IN', 'TRANSFER OUT', 'TRANSFER IN','ACCOUNT FEE', 'CASH ACCOUNT INTEREST', 'PAYMENT']
+        - name: transfer_amount_gbp_num
+          tests:
+            - not_null
+
+
+    - name: stg_oneview_cash
+      columns: *cash_table_columns
+
+
+    - name: stg_vanguard_isa_cash
+      columns: *cash_table_columns
+
+
+    - name: stg_vanguard_pension_cash
+      columns: *cash_table_columns
+
+
+    - name: stg_equateplus_transactions
+      columns: &transactions_table_columns
+        - name: transaction_dt
+          tests:
+            - not_null
+        - name: customer_email_txt
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_customer')
+                field: customer_email_txt
+        - name: company_number_key
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_company')
+                field: company_number_key
+        - name: wrapper_key
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_wrapper')
+                field: wrapper_key
+        - name: asset_local_name_txt
+          tests:
+            - not_null
+        - name: order_type_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['BUY', 'SELL']
+        - name: order_subtype_cd
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['ASSET ACQUISITION','ACCOUNT FEE', 'SWITCH IN', 'SWITCH OUT']
+        - name: transaction_details_txt
+          tests:
+            - not_null
+        - name: quantity_held_num
+          tests:
+            - not_null
+        - name: unit_price_gbp_num
+          tests:
+            - not_null
+        - name: extended_transaction_amount_gbp_num
+          tests:
+            - not_null
+
+
+    - name: stg_oneview_transactions
+      columns: *transactions_table_columns
+
+
+    - name: stg_vanguard_isa_transactions
+      columns: *transactions_table_columns
+
+
+    - name: stg_vanguard_pension_transactions
+      columns: *transactions_table_columns
+
+		

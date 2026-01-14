@@ -24,6 +24,7 @@ COPY (
     TRIM("asset_nm") AS asset_name_txt,
     TRIM("asset_short_nm") AS asset_shortname_txt,
     TRIM("stock_market_nm") AS stock_market_name_txt,
+    TRIM("asset_class_nm") AS asset_class_cd,
     TRIM("asset_type_nm") AS asset_type_cd,
     TRIM("asset_income_treatment_nm") AS asset_income_treatment_cd,
     TRIM("asset_base_currency_cd") AS asset_base_currency_cd
