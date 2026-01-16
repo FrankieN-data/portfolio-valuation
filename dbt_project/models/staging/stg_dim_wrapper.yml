@@ -1,0 +1,39 @@
+version: 2
+
+models:
+    - name: stg_dim_wrapper
+      description: "Tax wrappers are financials designed to help individuals shelter their investments from certain taxes, ultimately maximising 
+                    their wealth. Currently, only UK wrappers are taken into account. The content of the table has been extended to any account
+                    where you can held investments - whether it is providing tax protection or not - and include other instalment such as Premium Bonds."
+      columns:
+        - name: wrapper_key
+          description: "Internal unique identifier for a wrapper."
+          tests:
+            - unique 
+            - not_null
+        - name: wrapper_name_txt
+          description: "Internal wrapper name."
+          tests:
+            - not_null
+        - name: wrapper_type_cd
+          description: "Liquidity of a wrapper depend on its type, with liquidity being low for Pension wrapper - locked until 57 - and high for ISA account. 
+                        Wrapper are also associated with implicit deposit allowances - not yet added to the model: £20,000 p.a. for ISA, £60,000 p.a. for
+                        Pension, lifetime allowance of £50,000 for Premium Bonds - as of 2026."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['GIA', 'ISA', 'PENSION', 'PREMIUM BONDS']
+        - name: wrapper_subtype_cd
+          description: "The wrapper subtype allows to make a distinction between personal account, created by the investor own's initiative (ISA, GIA, SIPP), 
+                        and accounts dependng on the owner status of employment (SIP and Worplace Pension)."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['GIA', 'SIP', 'CASH ISA', 'INNOVATIVE FINANCE ISA', 'JUNIOR ISA', 'LIFETIME ISA', 
+                         'STOCKS AND SHARES ISA', 'WORKPLACE PENSION', 'SIPP', 'PREMIUM BONDS']
+        - name: tax_regime_uk_cd
+          description: "Tax rules that applies to withdrawal from the account. Each wrapper benefits from a different regim of taxation."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['TAX FREE', 'CAPITAL TAX', 'INCOME TAX', ]

@@ -1,0 +1,42 @@
+version: 2
+
+models:
+    - name: stg_dim_company
+      description: "Information about the financial institution providing the service."
+
+      tests:
+        - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - company_number_key
+              - company_number_system_cd
+
+      columns:
+        - name: company_number_key
+          description: "Company number emitted by the country of domiciliation."
+          tests: 
+            - not_null
+        - name: company_number_system_cd
+          description: "Local system used by the country of domiciliation to identify a company - such as SIRET in France, CRN in the UK."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['CRN']
+        - name: company_country_cd
+          description: "Country of domiciliation for the financial service provider. This allow to identify domestic investors and international ones."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['GBR']
+        - name: firm_register_number_key
+          description: "Financial Conduct Authority (FCA) number, attesting the institution is authorised in the UK and offer protection for money in cash
+                        in accordance with the FCA threeshold."
+          tests:
+            - not_null
+        - name: company_name_txt
+          description: "Name of the company as registered in the government bodies in charge of enterprise legislation. "
+          tests:
+            - not_null
+        - name: company_display_name_txt
+          description: "Internal company name used for data presentation."
+          tests:
+            - not_null

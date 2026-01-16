@@ -20,7 +20,7 @@ SET variable bronze_path = getvariable('base_path') || '/data/bronze';
 COPY (
   SELECT
     CAST("fdasst_asset_id" AS INTEGER) AS asset_id,
-    TRIM("local_asset_id") AS isin,
+    TRIM("isin") AS isin,
     TRIM("asset_nm") AS asset_name_txt,
     TRIM("asset_short_nm") AS asset_shortname_txt,
     TRIM("stock_market_nm") AS stock_market_name_txt,

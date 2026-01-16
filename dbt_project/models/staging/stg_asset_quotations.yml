@@ -1,0 +1,29 @@
+version: 2
+
+models:
+    - name: stg_asset_quotations
+      description: "Price history for all assets"
+      tests:
+        - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - quotation_dt
+              - isin
+
+      columns:
+        - name: quotation_dt
+          description: "Asset quotation date"
+          tests:
+            - not_null
+        - name: isin
+          description: "Unique Asset key identifier as used in table dim_asset."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_asset')
+                field: isin
+        - name: unit_market_value_gbp_num
+          description: "Closing price adjusted for split as available on yahoo!finance when available. In case this is not, the only quotation that would be 
+                        available is the purchasing price at the time of the transaction. In any case, the latest available unit market value as to be used 
+                        when running an evaluation."
+          tests:
+            - not_null

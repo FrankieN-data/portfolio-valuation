@@ -1,0 +1,23 @@
+version: 2
+
+models:
+    - name: stg_dim_customer
+      description: "Identify the owner of an account, with no additional information, such as demographic, retained."
+      columns:
+        - name: customer_email_txt
+          description: "The customer's email is considered as the unique identifier."
+          tests:
+            - unique 
+            - not_null
+        - name: customer_firstname_txt
+          description: "Customer first name."
+          tests:
+            - not_null
+        - name: customer_lastname_txt
+          description: "Customer first name."
+          tests:
+            - not_null
+        - name: customer_fullname_txt
+          description: "Concatenation of the customer first name and last name to be used in data presentation."
+          tests:
+            - not_null

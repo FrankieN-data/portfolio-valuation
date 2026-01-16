@@ -15,18 +15,14 @@ SET variable bronze_path = getvariable('base_path') || '/data/bronze';
 -- unit_market_value_gbp_num: VARCHAR
 COPY (
   SELECT
-    CAST("quote_date_dt" AS DATE) AS quotation_date, -- date format: YYYY-MM-DD
-    CAST("fdasst_asset_id" AS INTEGER) AS asset_id,
+    strptime("quote_date_dt", '%d/%m/%Y')::DATE AS quotation_date,
+    TRIM("isin") AS isin,
     CAST(regexp_replace("asset_price_GBP_amt", '[^0-9.-]', '', 'g') AS DECIMAL(18,4)) AS unit_market_value_gbp_num
   FROM read_csv_auto(
     (getvariable('raw_path')) || '/asset_quotations.csv',
     header = true,
     null_padding = true,
-    types = {
-      "quote_date_dt": "VARCHAR", 
-      "fdasst_asset_id": "VARCHAR", 
-      "asset_price_GBP_amt": "VARCHAR"
-    } 
+    types = { "quote_date_dt": "VARCHAR", "asset_price_GBP_amt": "VARCHAR"} 
   )
   WHERE "quote_date_dt" IS NOT NULL 
 ) TO (getvariable('bronze_path') || '/asset_quotations.parquet') (FORMAT PARQUET, COMPRESSION 'SNAPPY');

@@ -3,12 +3,20 @@ with source as (
     select * from {{ source('bronze_portfolio', 'asset_quotations') }}
 ),
 
+string_cleaning as (
+    select
+        *,
+        upper(trim(isin)) as cleaned_isin
+    from source
+
+),
+
 final as (
     select
         cast(quotation_date AS DATE) as quotation_dt,
-        cast(asset_id AS INTEGER) as asset_id,
+        cast(cleaned_isin AS CHAR(12)) as isin,
         cast(unit_market_value_gbp_num AS DECIMAL(18, 4)) as unit_market_value_gbp_num
-    from source
+    from string_cleaning
 )
 
 select * from final

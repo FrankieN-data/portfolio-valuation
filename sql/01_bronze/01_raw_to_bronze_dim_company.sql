@@ -19,7 +19,7 @@ SET variable bronze_path = getvariable('base_path') || '/data/bronze';
 COPY (
   SELECT
     TRIM("company_number_key")  AS company_number_key,
-    TRIM("company_number_type_cd") AS company_number_type_cd,
+    TRIM("company_number_system_cd") AS company_number_system_cd,
     TRIM("company_country_cd") AS company_country_cd,
     TRIM("firm_register_number") AS firm_register_number_key,
     TRIM("company_name_txt") AS company_name_txt,

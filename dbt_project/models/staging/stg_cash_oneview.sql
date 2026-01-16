@@ -59,7 +59,8 @@ final as (
     select
         cast(trade_date as DATE) as transfer_dt,
         cast('FRANCINE.NZUZI@GMAIL.COM' as VARCHAR) as customer_email_txt,        
-        cast('00984275' as VARCHAR) as company_number_key,
+        cast('00984275' as VARCHAR) as company_number_key,       
+        cast('CRN' as VARCHAR) as company_number_system_cd,
         cast('WRP_PENSION_TAX' as VARCHAR) as wrapper_key,
         cast(upper(transfer_type_cd) as VARCHAR) as transfer_type_cd,
         cast(upper(transfer_subtype_cd) as VARCHAR) as transfer_subtype_cd,

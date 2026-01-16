@@ -19,7 +19,7 @@ cleaning as (
 
 final as (
     select
-        cast(isin AS VARCHAR) as asset_key,
+        cast(isin AS CHAR(12)) as isin,
         cast(asset_name_txt AS VARCHAR) as asset_name_txt,
         cast(asset_shortname_txt AS VARCHAR) as asset_display_name_txt,
         cast(stock_market_name_txt AS VARCHAR) as stock_market_name_txt,

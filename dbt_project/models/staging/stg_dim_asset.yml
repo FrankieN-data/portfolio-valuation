@@ -1,0 +1,65 @@
+version: 2
+
+models:
+    - name: stg_dim_asset
+      description: "Master list of all tradable instruments (Equities, ETFs, Funds). Provide standardise asset name, asset classe
+                    and currency information."
+
+      columns:
+        - name: isin
+          description: "Natural key for the asset, corresponding to the International Securities Identification Number (ISIN), unique 
+                        12-character alphanumeric code that globally identifies a security."
+          tests:
+            - unique 
+            - not_null
+
+        - name: asset_name_txt
+          description: "Asset full name has listed in the stock exchange market the asset is traded."
+          tests:
+            - not_null
+
+        - name: asset_display_name_txt
+          description: "Internal asset name used for data presentation."
+          tests:
+            - not_null
+
+        - name: stock_market_name_txt
+          description: "Stock exchange market where the asset is traded. This inform on the openess of the investor - only positioned on 
+                        major market, or also exploring the fringe one ?"
+          tests:
+            - not_null
+
+        - name: asset_class_cd
+          description: "The asset class is an indication of the level of volatility and suggested risk - with fixed income corresponding to 
+                        the lowest level of risk with low volatility, fund aiming to offer balanced portfolio of medium to high risk, and 
+                        cryptocurrency and equity being the highest risk/volatility."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['EQUITY', 'FUND', 'DERIVATIVE', 'FIXED INCOME', 'CRYPTOCURRENCY']
+
+        - name: asset_type_cd
+          description: "Asset type provide a greater description of the type of assets, implying different level of risk within each class."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['SHARE', 'PREFERRED SHARE', 'EQUITY WARRANT', 'ACTIVE FUND', 'PASSIVE FUND', 'EXCHANGE-TRADED FUND', 
+                         'FUTURE', 'OPTION', 'SWAP', 'FORWARD', 'BOND', 'TREASURY BILL', 'CORPORATE LOAN', 'CRYPTOCURRENCY']
+
+        - name: asset_income_treatment_cd
+          description: "The asset income treatment informs on the investor strategy for its portfolio. Accumulation means that perceived dividends
+                        are re-invested translating a strategy for capital growth , while distributing means any dividends perceived from a share is
+                        paid to the investor. The goal is then to generate wealth with this asset. Note that if the dividend is manually reinvested in the
+                        case of distributing treatment, this will not be captured."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['ACCUMULATION', 'DISTRIBUTING']
+                
+        - name: asset_base_currency_cd
+          description: "When the asset base currency is different from the user's household currency, the exchange rate  will have an impact on the actual 
+                        return of an asset."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['EUR', 'GBP', 'USD']
