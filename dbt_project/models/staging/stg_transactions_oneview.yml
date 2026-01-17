@@ -1,0 +1,62 @@
+version: 2
+
+models:
+    - name: stg_transactions_oneview
+      description: "Transaction history tracking portfolio transactions for employee pension schemes managed via OneView."
+      columns:
+        - name: transaction_dt
+          description: "Date the order has been executed."
+          tests:
+            - not_null
+        - name: customer_email_txt
+          description: "Email of the portfolio owner."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_customer')
+                field: customer_email_txt
+
+        - name: company_number_key
+          description: "Company number of the financial institution executing the transaction."
+          tests:
+            - not_null
+        - name: company_number_system_cd
+          description: "Local system used by the country of domiciliation to identify a company - such as SIRET in France, CRN in the UK."
+          tests:
+            - not_null
+        # Virtual Column test for composite natural key
+        - name: "company_number_key || '-' || company_number_system_cd"
+          description: "Composite natural key link to dim_company"
+          tests:
+            - relationships:
+                to: ref('dim_company')
+                field: "company_number_key || '-' || company_number_system_cd"
+                
+        - name: wrapper_key
+          description: "Unique key corresponding to the wrapper the transaction has been executed within."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_wrapper')
+                field: wrapper_key
+        - name: asset_local_name_txt
+          description: "Name of the asset bought or sale as part of the transaction."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_asset')
+                field: asset_name_txt
+        - name: transaction_type_cd
+          description: "Nature of the order executed - Buy or Sell."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['CONTRIBUTION','SWITCH IN','SWITCH OUT']
+        - name: quantity_held_num
+          description: "Total quantity of assets exchanged during this transaction."
+          tests:
+            - not_null
+        - name: market_unit_price_gbp_num
+          description: "Price paid per unit for this transaction. The amount is expressed on GBP at the time of execution."
+          tests:
+            - not_null

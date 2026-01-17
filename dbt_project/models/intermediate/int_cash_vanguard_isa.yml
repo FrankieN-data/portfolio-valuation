@@ -1,0 +1,61 @@
+version: 2
+
+models:
+    - name: int_cash_vanguard_isa
+      description: "A ledger of cash movements within the EquatePlus account. Used to track uninvested cash balances and interest payments. 
+                    Each row represents a cash-in or cash-out event."
+      columns:
+        - name: transfer_dt
+          description: "Transfert date where the account balance changed."
+          tests:
+            - not_null
+        - name: customer_email_txt
+          description: "Email of the portfolio owner."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_customer')
+                field: customer_email_txt
+
+        - name: company_number_key
+          description: "Company number of the financial institution executing the transaction."
+          tests:
+            - not_null
+        - name: company_number_system_cd
+          description: "Local system used by the country of domiciliation to identify a company - such as SIRET in France, CRN in the UK."
+          tests:
+            - not_null
+        # Virtual Column test for composite natural key
+        - name: "company_number_key || '-' || company_number_system_cd"
+          description: "Composite natural key link to dim_company"
+          tests:
+            - relationships:
+                to: ref('dim_company')
+                field: "company_number_key || '-' || company_number_system_cd"
+
+        - name: wrapper_key
+          description: "Internal unique identifier from dim_wrapper table."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stg_dim_wrapper')
+                field: wrapper_key
+        - name: transfer_type_cd
+          description: "The transfer type is indicating the destination of a transfer: a deposit is money going in the account, a withdrawal money
+                        going out of the account, and a switch is money staying within the account but changing allocation."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['DEPOSIT', 'WITHDRAWAL']
+        - name: transfer_subtype_cd
+          description: "Additional information about the source and the destination of the money. This is especially interesting to make the distinction 
+                        between net contribution - money coming out of the investor pocket - and government and employer contribution. This is also where
+                        you will find information about fees."
+          tests:
+            - not_null
+            - accepted_values:
+                values: ['NET CONTRIBUTION', 'DIVIDEND', 'PURCHASE', 'CASH ACCOUNT INTEREST', 'ACCOUNT FEE', 'PAYMENT']
+        - name: transfer_amount_gbp_num
+          description: "Total amount of the transfer (in GBP)."
+          tests:
+            - not_null
