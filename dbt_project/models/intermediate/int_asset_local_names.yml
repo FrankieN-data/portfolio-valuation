@@ -1,0 +1,38 @@
+version: 2
+
+models:
+    - name: int_asset_local_names
+      description: "Intermediate table identifying asset local names from various transaction sources that do not have a matching asset in the dim_asset table.
+                    This helps to identify gaps in asset coverage and improve the asset dimension over time."      
+      
+      tests:
+        - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - asset_local_name_txt
+              - company_number_key
+              - company_number_system_cd
+
+      columns:
+        - name: asset_local_name_id
+          description: "Surrogate key for the asset local name."
+          tests:
+            - unique
+            - not_null
+        - name: asset_id
+          description: "Surrogate key for the asset."
+          tests:
+            - not_null:
+                config:
+                  severity: warn
+        - name: asset_local_name_txt
+          description: "Local name of the asset."
+          tests:
+            - not_null
+        - name: company_number_key
+          description: "Company number of the financial institution executing the transaction."
+          tests:
+            - not_null
+        - name: company_number_system_cd
+          description: "Local system used by the country of domiciliation to identify a company - such as SIRET in France, CRN in the UK."
+          tests:
+            - not_null
