@@ -218,3 +218,6 @@ data/
 venv/
 *.log
 .DS_Store
+
+# Ignore dashboard folder
+dbt_project/dashboards/

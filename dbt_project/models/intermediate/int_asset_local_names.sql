@@ -56,7 +56,7 @@ asset_local_names as (
         {{ dbt_utils.generate_surrogate_key(
             ['aln.asset_local_name_txt', 'aln.company_number_key', 'aln.company_number_system_cd']
         ) }} as asset_local_name_id,
-        a_messy_match.asset_id as asset_id,
+        coalesce(a_exact_match.asset_id, a_messy_match.asset_id) as asset_id,
         aln.asset_local_name_txt,
         aln.company_number_key,
         aln.company_number_system_cd
@@ -75,12 +75,8 @@ asset_local_names as (
             on aln.asset_local_name_txt = current.asset_local_name_txt
             and aln.company_number_key = current.company_number_key
             and aln.company_number_system_cd = current.company_number_system_cd
-    {% endif %}
 
-    where a_exact_match.asset_id is null -- Ignore exact matches
-
-    {% if is_incremental() %}
-        and current.asset_local_name_id is null
+        where current.asset_local_name_id is null
     {% endif %}
 
     qualify row_number() over (

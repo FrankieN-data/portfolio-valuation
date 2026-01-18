@@ -21,7 +21,7 @@ models:
             - relationships:
                 to: ref('stg_dim_asset')
                 field: isin
-        - name: unit_market_value_gbp_num
+        - name: market_unit_price_gbp_num
           description: "Closing price adjusted for split as available on yahoo!finance when available. In case this is not, the only quotation that would be 
                         available is the purchasing price at the time of the transaction. In any case, the latest available unit market value as to be used 
                         when running an evaluation."

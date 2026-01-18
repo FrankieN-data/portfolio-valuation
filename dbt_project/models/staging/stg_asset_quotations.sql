@@ -15,7 +15,7 @@ final as (
     select
         cast(quotation_date AS DATE) as quotation_dt,
         cast(cleaned_isin AS CHAR(12)) as isin,
-        cast(unit_market_value_gbp_num AS DECIMAL(18, 4)) as unit_market_value_gbp_num
+        cast(unit_market_value_gbp_num AS DECIMAL(18, 4)) as market_unit_price_gbp_num
     from string_cleaning
 )
 
