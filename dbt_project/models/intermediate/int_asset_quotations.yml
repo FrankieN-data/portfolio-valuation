@@ -1,0 +1,15 @@
+version: 2
+models:
+  - name: int_asset_quotations
+    description: "Intermediate model for asset quotations with surrogate keys."
+    columns:
+      - name: asset_quotation_id
+        description: "Surrogate key for the asset quotation."
+      - name: quotation_dt
+        description: "The date of the quotation."
+      - name: asset_id
+        description: "Surrogate key for the asset."
+      - name: isin
+        description: "International Securities Identification Number."
+      - name: market_unit_price_gbp_num
+        description: "Market unit price in GBP."
