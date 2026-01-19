@@ -34,8 +34,10 @@ models:
     # Config indicated by + and applies to all files under models/example/
     example:
       +materialized: view
-      
     staging:
-      +tags:
-        - "stg_cash"
-        - "stg_transactions"
+      +materialized: view      # Staging is usually fast as a view
+    intermediate:
+      +materialized: table   
+    marts:
+      core:
+        +materialized: table 

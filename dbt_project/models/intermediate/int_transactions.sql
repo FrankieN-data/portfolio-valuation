@@ -36,6 +36,7 @@ final as (
         t.wrapper_key,
         aln.asset_id,
         t.asset_local_name_txt,
+        {{ dbt_utils.generate_surrogate_key(["'ORDER'", 'order_type_cd', 'order_subtype_cd']) }} as event_categorisation_id,
         order_type_cd,
         order_subtype_cd,
         transaction_details_txt,

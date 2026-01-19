@@ -34,6 +34,7 @@ final as (
         company_number_system_cd,
         {{ dbt_utils.generate_surrogate_key(['wrapper_key']) }} as wrapper_id,         
         wrapper_key,
+        {{ dbt_utils.generate_surrogate_key(["'TRANSFER'", 'transfer_type_cd', 'transfer_subtype_cd']) }} as event_categorisation_id,
         transfer_type_cd,
         transfer_subtype_cd,
         transfer_amount_gbp_num
