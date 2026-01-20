@@ -1,3 +1,9 @@
+{{
+  config(
+    post_hook="COPY (SELECT * FROM {{ this }}) TO '../data/gold/dim_assets.parquet' (FORMAT 'PARQUET')"
+  )
+}}
+
 select 
     asset_id,
     isin,

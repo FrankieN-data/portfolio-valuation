@@ -40,7 +40,7 @@ models:
                 to: ref('stg_dim_wrapper')
                 field: wrapper_key
         - name: asset_local_name_txt
-          description: "Name of the asset bought or sale as part of the transaction."
+          description: "Name of the asset bought or sale as part of the transaction. For Vanguard transactions, we're making sure 'VANGUARD ' prefixes the asset name to improve matching with dim_asset."
           tests:
             - not_null
             - relationships:

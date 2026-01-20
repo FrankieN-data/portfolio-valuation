@@ -1,3 +1,9 @@
+{{
+  config(
+    post_hook="COPY (SELECT * FROM {{ this }}) TO '../data/gold/dim_date.parquet' (FORMAT 'PARQUET')"
+  )
+}}
+
 with date_spine as (
     select range::DATE as date_day
     from range('2020-01-01'::DATE, '2079-12-08'::DATE, INTERVAL 1 DAY)
@@ -18,5 +24,13 @@ select
             then (year(date_day) - 1) || '/' || year(date_day)
         else 
             year(date_day) || '/' || (year(date_day) + 1)
-    end as uk_fiscal_year
+    end as uk_fiscal_year,
+    case 
+        when day(date_day) = 28 then true 
+        else false 
+    end as end_of_month,
+    case 
+        when strftime(date_day, '%m%d') = '0405' then true 
+        else false 
+    end as end_of_fiscal_year,
 from date_spine

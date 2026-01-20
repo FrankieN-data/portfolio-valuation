@@ -6,8 +6,8 @@ with source as (
 string_cleaning as (
     select 
         *,
-        upper(trim('asset_name_txt')) as asset_local_name_txt,
-        upper(trim('trade_details_txt')) as transaction_details_txt
+        upper(trim(asset_name_txt)) as asset_local_name_txt,
+        upper(trim(trade_details_txt)) as transaction_details_txt
     from source
 ),
 

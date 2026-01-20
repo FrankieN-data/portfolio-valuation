@@ -23,7 +23,10 @@ final as (
         company_number_key,        
         company_number_system_cd,
         wrapper_key,
-        asset_local_name_txt,
+        case 
+            when asset_local_name_txt NOT LIKE 'VANGUARD %' then 'VANGUARD ' || asset_local_name_txt
+            else asset_local_name_txt
+        end as asset_local_name_txt,
         order_type_cd,
         order_subtype_cd,
         transaction_details_txt,        

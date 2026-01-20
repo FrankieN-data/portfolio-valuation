@@ -1,3 +1,9 @@
+{{
+  config(
+    post_hook="COPY (SELECT * FROM {{ this }}) TO '../data/gold/dim_wrapper.parquet' (FORMAT 'PARQUET')"
+  )
+}}
+
 select
     wrapper_id,
     wrapper_name_txt as wrapper_name,

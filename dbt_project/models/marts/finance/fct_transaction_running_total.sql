@@ -1,3 +1,9 @@
+{{
+  config(
+    post_hook="COPY (SELECT * FROM {{ this }}) TO '../data/gold/fct_transaction_running_total.parquet' (FORMAT 'PARQUET')"
+  )
+}}
+
 with daily_summarised as (
     -- Step 1: Sum all transactions happening on the same day
     select

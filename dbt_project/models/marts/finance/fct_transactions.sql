@@ -1,3 +1,9 @@
+{{
+  config(
+    post_hook="COPY (SELECT * FROM {{ this }}) TO '../data/gold/fct_transactions.parquet' (FORMAT 'PARQUET')"
+  )
+}}
+
 select
     strftime(transaction_dt, '%Y%m%d')::INT as transaction_date_key,
     customer_id,  
