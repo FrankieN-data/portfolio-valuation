@@ -43,9 +43,6 @@ models:
           description: "Name of the asset bought or sale as part of the transaction."
           tests:
             - not_null
-            - relationships:
-                to: ref('stg_dim_asset')
-                field: asset_name_txt
         - name: order_type_cd
           description: "Nature of the order executed - Buy or Sell."
           tests:

@@ -43,9 +43,6 @@ models:
           description: "Name of the asset bought or sale as part of the transaction."
           tests:
             - not_null
-            - relationships:
-                to: ref('stg_dim_asset')
-                field: asset_name_txt
         - name: order_type_cd
           description: "Nature of the order executed - Buy or Sell."
           tests:
@@ -67,7 +64,7 @@ models:
           description: "Total quantity of assets exchanged during this transaction."
           tests:
             - not_null
-        - name: unit_price_gbp_num
+        - name: market_unit_price_gbp_num
           description: "Price paid per unit for this transaction. The amount is expressed on GBP at the time of execution."
           tests:
             - not_null

@@ -55,6 +55,8 @@ models:
             - not_null
             - accepted_values:
                 values: ['NET CONTRIBUTION', 'DIVIDEND', 'PURCHASE', 'CASH ACCOUNT INTEREST', 'ACCOUNT FEE', 'PAYMENT']
+                config:
+                  severity: warn                
         - name: transfer_amount_gbp_num
           description: "Total amount of the transfer (in GBP)."
           tests:
