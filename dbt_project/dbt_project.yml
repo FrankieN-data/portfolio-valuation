@@ -31,13 +31,12 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   portfolio_valuation:
-    # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: view
     staging:
-      +materialized: view      # Staging is usually fast as a view
+      +schema: staging
+      +materialized: view      # Staging is usually faster as a view
     intermediate:
+      +schema: intermediate
       +materialized: table   
     marts:
-      core:
-        +materialized: table 
+      +schema: marts
+      +materialized: table 
