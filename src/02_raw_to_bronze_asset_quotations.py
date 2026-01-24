@@ -1,19 +1,31 @@
 import polars as pl
+import sys
 import os
+from utils import get_config, get_smart_logger
 
-import os
+# Return status code
+# 0 - Success
+# 1 - Error 
 
-# This finds the directory where run_pipeline.py actually lives
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Setup logging with a safety check for the argument
+logger = get_smart_logger(__name__)
 
 def ingest_asset_quotations():
     # 1. Setup Paths
-    base_path = os.path.join(SCRIPT_DIR, '../..')
-    raw_file = os.path.join(base_path, 'data', 'raw', 'asset_quotations.csv')
-    bronze_file = os.path.join(base_path, 'data', 'bronze', 'asset_quotations.parquet')
+    config = get_config()    
+    raw_file = config['paths']['raw'] / "asset_quotations.csv"
+    bronze_path = config['paths']['bronze']
+    bronze_file = bronze_path / "asset_quotations.parquet"
+    
+    # Ensure output directory exists
+    bronze_path.mkdir(parents=True, exist_ok=True)
 
-    print(f"[ACTION] Polars: Ingesting {raw_file}...")
+    logger.info(f"Polars: Ingesting {raw_file}...")
 
+    if not os.path.exists(raw_file):
+        logger.warning(f"Skip: {raw_file} not found.")
+        sys.exit(1)
+    
     try:
         # 2. Read and Transform
         df = (
@@ -45,12 +57,12 @@ def ingest_asset_quotations():
 
         # 3. Write to Parquet
         df.write_parquet(bronze_file, compression="snappy")
-        print(f"Success: Created {bronze_file}")
-        return True
+        logger.info(f"[SUCCESS] Created {bronze_file}")
+        sys.exit(0)
 
     except Exception as e:
-        print(f"Polars Error: {e}")
-        return False
+        logger.error(f"Polars Error: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     ingest_asset_quotations()

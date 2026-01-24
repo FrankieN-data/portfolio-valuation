@@ -1,20 +1,31 @@
 import polars as pl
 import os
+import sys
+from utils import get_config, get_smart_logger
 
-# Assuming SCRIPT_DIR is defined at the top of your orchestrator
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Return status code
+# 0 - Success
+# 1 - No file
+# 2 - Error  
+
+# Setup logging with a safety check for the argument
+logger = get_smart_logger(__name__)
 
 def ingest_dim_asset():
     # 1. Setup Paths (Anchored to Project Root)
-    base_path = os.path.join(SCRIPT_DIR, '../..')
-    raw_file = os.path.join(base_path, 'data', 'raw', 'dim_asset.csv')
-    bronze_file = os.path.join(base_path, 'data', 'bronze', 'dim_asset.parquet')
+    config = get_config()
+    raw_file = config['paths']['raw'] / "dim_asset.csv"
+    bronze_path = config['paths']['bronze']
+    bronze_file = bronze_path / "dim_asset.parquet"
 
-    print(f"[ACTION] Polars: Ingesting {raw_file}...")
+    # Ensure output directory exists
+    bronze_path.mkdir(parents=True, exist_ok=True)
+
+    logger.info(f"Polars: Ingesting {raw_file}...")
 
     if not os.path.exists(raw_file):
-        print(f"Skip: {raw_file} not found.")
-        return False
+        logger.warning(f"Skip: {raw_file} not found.")
+        sys.exit(1)
 
     try:
         # 2. Read and Transform
@@ -61,12 +72,12 @@ def ingest_dim_asset():
 
         # 3. Write to Parquet
         df.write_parquet(bronze_file, compression="snappy")
-        print(f"Success: Created {bronze_file}")
-        return True
+        logger.info(f"[SUCCESS] Created {bronze_file}")
+        sys.exit(0)
 
     except Exception as e:
-        print(f"Polars Error on dim_asset: {e}")
-        return False
+        logger.error(f"Polars Error on dim_asset: {e}")
+        sys.exit(2)
 
 if __name__ == "__main__":
     ingest_dim_asset()
