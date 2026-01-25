@@ -39,7 +39,6 @@ __pycache__/
 # 4. DOCUMENTATION
 # ==========================================
 # Ignore generated documentation sites (keeping your .yml source files)
-docs/
 /site
 htmlcov/
 
