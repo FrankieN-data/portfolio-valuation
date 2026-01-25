@@ -11,12 +11,12 @@ from utils import get_config, get_smart_logger
 # Setup logging with a safety check for the argument
 logger = get_smart_logger(__name__)
 
-def ingest_equateplus_transactions():
+def ingest_equateplus_statement():
     # 1. Setup Paths
     config = get_config()
-    raw_file = config['paths']['raw'] / "equateplus_transactions.csv"
+    raw_file = config['paths']['raw'] / "equateplus_statement.csv"
     bronze_path = config['paths']['bronze']
-    bronze_file = bronze_path / "equateplus_transactions.parquet"
+    bronze_file = bronze_path / "equateplus_statement.parquet"
 
     # Ensure output directory exists
     bronze_path.mkdir(parents=True, exist_ok=True)
@@ -107,4 +107,4 @@ def ingest_equateplus_transactions():
 
 
 if __name__ == "__main__":
-    ingest_equateplus_transactions()
+    ingest_equateplus_statement()

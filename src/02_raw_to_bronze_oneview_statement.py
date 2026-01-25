@@ -11,12 +11,12 @@ from utils import get_config, get_smart_logger
 # Setup logging with a safety check for the argument
 logger = get_smart_logger(__name__)
 
-def ingest_oneview_transactions():
+def ingest_oneview_statement():
     # 1. Setup Paths
     config = get_config()
-    raw_file = config['paths']['raw'] / "oneview_transactions.csv"
+    raw_file = config['paths']['raw'] / "oneview_statement.csv"
     bronze_path = config['paths']['bronze']
-    bronze_file = bronze_path / "oneview_transactions.parquet"
+    bronze_file = bronze_path / "oneview_statement.parquet"
 
     # Ensure output directory exists
     bronze_path.mkdir(parents=True, exist_ok=True)
@@ -81,4 +81,4 @@ def ingest_oneview_transactions():
         sys.exit(2)
 
 if __name__ == "__main__":
-    ingest_oneview_transactions()
+    ingest_oneview_statement()

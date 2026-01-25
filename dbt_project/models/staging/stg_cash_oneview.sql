@@ -1,5 +1,5 @@
 with source as (
-    select * from {{ source('bronze_portfolio', 'oneview_transactions') }}
+    select * from {{ source('bronze_portfolio', 'oneview_statement') }}
 ),
 
 string_cleaning as (

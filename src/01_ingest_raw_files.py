@@ -1,6 +1,4 @@
-import logging
 import shutil
-from pathlib import Path
 import sys
 from utils import get_config, get_smart_logger
 

@@ -1,0 +1,51 @@
+# config.yaml
+paths:
+  source: "source"
+  raw: "data/raw"
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  archive: "data/archive"
+  logs: "logs"
+  src: "src"
+  dbt_project: "dbt_project"
+
+ingestion:
+  allowed_extensions: [".csv"]
+ 
+schema_contracts:
+  asset_quotations:
+    file_pattern: "asset_quotation.csv"
+    required_columns: ["quote_date_dt", "isin", "asset_price_GBP_amt"]
+ 
+  asset:
+    file_pattern: "dim_asset.csv"
+    required_columns: ["fdasst_asset_id", "isin", "asset_short_nm", "stock_market_nm", "asset_class_nm", "asset_type_nm", "asset_income_treatment_nm", "asset_base_currency_cd" ]
+ 
+  company:
+    file_pattern: "dim_company.csv"
+    required_columns: ["company_number_key", "company_number_system_cd", "company_country_cd", "firm_register_number", "company_name_txt", "company_shortname_txt"]
+ 
+  customer:
+    file_pattern: "dim_customer.csv"
+    required_columns: ["customer_email_txt", "customer_firstname", "customer_lastname"]
+ 
+  wrapper:
+    file_pattern: "dim_wrapper.csv"
+    required_columns: ["wrapper_key", "wrapper_name_txt", "wrapper_type_cd", "wrapper_subtype_cd", "tax_regime_uk_cd"]
+ 
+  equateplus_statement:
+    file_pattern: "equateplus_statement.csv"
+    required_columns: ["Allocation date", "Plan", "Instrument type", "Instrument", "Contribution type", "Strike price / Cost basis", "Market price", "Available from", "Expiry date", "Allocated quantity", "Outstanding quantity", "Available quantity", "Estimated current outstanding value", "Estimated current available value"]
+ 
+  oneview_statement:
+    file_pattern: "oneview_statement.csv"
+    required_columns: ["Trade Date", "Transaction Type", "Fund name", "Value", "Traded Units", "Trade Price", "Switch No."]
+ 
+  vanguard_cash_statement:
+    file_pattern: "vanguard_*_cash_statement.csv"
+    required_columns: [ "Date ", "Details ", "Amount ", "Balance "]
+ 
+  vanguard_transactions_statement:
+    file_pattern: "vanguard_*_transactions_statement.csv"
+    required_columns: ["Date", "InvestmentName", "TransactionDetails", "Quantity", "Price", "Cost"]

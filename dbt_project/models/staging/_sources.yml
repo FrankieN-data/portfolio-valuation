@@ -12,9 +12,9 @@ sources:
       - name: dim_customer
       - name: dim_wrapper
       - name: asset_quotations
-      - name: equateplus_transactions
-      - name: oneview_transactions
-      - name: vanguard_isa_cash
-      - name: vanguard_isa_transactions
-      - name: vanguard_pension_cash
-      - name: vanguard_pension_transactions
+      - name: equateplus_statement
+      - name: oneview_statement
+      - name: vanguard_isa_cash_statement
+      - name: vanguard_isa_transactions_statement
+      - name: vanguard_pension_cash_statement
+      - name: vanguard_pension_transactions_statement

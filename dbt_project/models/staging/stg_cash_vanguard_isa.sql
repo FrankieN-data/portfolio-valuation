@@ -1,6 +1,6 @@
 with source as (
     -- This 'source' function links to our YAML definition above
-    select * from {{ source('bronze_portfolio', 'vanguard_isa_cash') }}
+    select * from {{ source('bronze_portfolio', 'vanguard_pension_cash_statement') }}
 ),
 
 string_cleaning as (
