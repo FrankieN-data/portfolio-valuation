@@ -38,7 +38,7 @@ The architecture was designed to meet a specific set of functional and non-funct
 
 The following table outlines the deliberate choices made to ensure the system is modular, auditable, and ready for future scale.
 
-![System Architecture](./docs/diagrams/architecture-diagram.drawio.png)
+![System Architecture](./docs/diagrams/architecture-diagram-0.2.drawio.png)
 
 | Architecture Step | Tool | Justification |
 | :--- | :--- | :--- |
