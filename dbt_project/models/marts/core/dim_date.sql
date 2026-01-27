@@ -20,17 +20,16 @@ select
     dayname(date_day) as day_of_week,
     -- UK Fiscal Year Logic: April 6th Switch
     case 
-        when date_day < make_date(year(date_day), 4, 6) 
-            then (year(date_day) - 1) || '/' || year(date_day)
-        else 
-            year(date_day) || '/' || (year(date_day) + 1)
+        when date_day < make_date(year(date_day), 4, 6) then (year(date_day) - 1) || '/' || year(date_day)
+        else year(date_day) || '/' || (year(date_day) + 1)
     end as uk_fiscal_year,
+    case
+        when day(date_day) <= 28 then make_date(year(date_day), month(date_day), 28)
+        when month(date_day) < 12 then make_date(year(date_day), month(date_day)+1, 28)
+        else make_date(year(date_day)+1, 1, 28)
+    end as last_day_of_the_month,
     case 
-        when day(date_day) = 28 then true 
-        else false 
-    end as end_of_month,
-    case 
-        when strftime(date_day, '%m%d') = '0405' then true 
-        else false 
-    end as end_of_fiscal_year,
+        when date_day < make_date(year(date_day), 4, 6) then make_date(year(date_day), 4, 5)
+        else make_date(year(date_day)+1, 4, 5)
+    end as last_day_of_uk_fiscal_year
 from date_spine
