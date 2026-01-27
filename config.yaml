@@ -1,5 +1,6 @@
 # config.yaml
 paths:
+  root: ".."
   source: "source"
   raw: "data/raw"
   bronze: "data/bronze"
@@ -15,7 +16,7 @@ ingestion:
  
 schema_contracts:
   asset_quotations:
-    file_pattern: "asset_quotation.csv"
+    file_pattern: "asset_quotations.csv"
     required_columns: ["quote_date_dt", "isin", "asset_price_GBP_amt"]
  
   asset:
@@ -44,7 +45,7 @@ schema_contracts:
  
   vanguard_cash_statement:
     file_pattern: "vanguard_*_cash_statement.csv"
-    required_columns: [ "Date ", "Details ", "Amount ", "Balance "]
+    required_columns: [ "Date", "Details", "Amount", "Balance"]
  
   vanguard_transactions_statement:
     file_pattern: "vanguard_*_transactions_statement.csv"

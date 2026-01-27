@@ -9,7 +9,7 @@ from utils import get_config, get_smart_logger
 # 2 - Error  
 
 # Setup logging with a safety check for the argument
-logger = get_smart_logger(__name__)
+logger = get_smart_logger("RAW TO BRONZE")
 
 def ingest_vanguard_isa_cash_statement():
     # 1. Setup Paths

@@ -1,37 +1,52 @@
 import shutil
 import sys
-from utils import get_config, get_smart_logger
+import os
+from pathlib import Path
+from utils import get_smart_logger, get_config
 
-# Return status code
-# 0 - Success
-# 1 - No file 
+logger = get_smart_logger("RAW INGESTION")
+config = get_config()
 
-# Setup logging with a safety check for the argument
-logger = get_smart_logger(__name__)
-
-def ingest_raw_files():
-    # Define your paths
-    config = get_config()
-    source_path = config['paths']['source']
-    raw_path = config['paths']['raw']    
-
-    # 1. Ensure the raw directory exists
-    raw_path.mkdir(parents=True, exist_ok=True)
+def ingest_raw_files(source_validated_flag):
+    """
+        Physically moves a list of pre-validated source files to the raw directory.
+        
+        Parameters:
+        -----------
+        source_validated_flag : str
+            Expects values True or False, representing the result of the schema scan on source files
+    """
     
-    # 2. Identify files to copy (e.g., all CSVs)
-    files_to_copy = list(source_path.glob("*.csv"))
-    
-    if not files_to_copy:
-        logger.warning(f"No files found in {source_path}")
+    if not source_validated_flag.lower() == 'true':
+        logger.error("At least one source file not validated.")
         sys.exit(1)
 
-    for file_path in files_to_copy:
-        # 3. Copy file to the raw folder
-        shutil.copy(file_path, raw_path / file_path.name)
-        logger.info(f"[SUCCESS] Ingested: {file_path.name}")
+    # Convert strings from config into Path objects
+    source_path = Path(config['paths']['source'])
+    raw_path = Path(config['paths']['raw'])
+    file_paths = list(source_path.glob("*.csv"))
 
-    logger.info(f"[INGESTION COMPLETED SUCCESSFULLY] Ingestion complete. {len(files_to_copy)} files ready in {raw_path}")
+    # Source files validated : there are some files and they are all checked
+    for file_path in file_paths:
+        try:
+            shutil.copy(file_path, raw_path / os.path.basename(file_path))
+            logger.info(f"File {file_path} moved successfully")
+        except PermissionError:
+            logger.error(f"Permission Denied: Is the file {file_path} open in another program?")
+            sys.exit(2)
+        except OSError as e:
+            logger.error(f"System error while moving file {file_path}: {e}.")
+            sys.exit(3)
+        except Exception as e:
+            logger.error(f"Unexpected error moving file {file_path}: {e}.")
+            sys.exit(4)
+
+    logger.info(f"Successfully ingested {len(file_paths)} files.")
     sys.exit(0)
 
 if __name__ == "__main__":
-    ingest_raw_files()
+    if len(sys.argv) > 1:
+        ingest_raw_files(sys.argv[1])
+    else:
+        logger.error("No validation flag provided.")
+        sys.exit(1)
